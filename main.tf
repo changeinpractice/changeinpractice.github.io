@@ -56,3 +56,27 @@ resource "aws_route53_record" "dns_record_github_pages" {
   records = ["${var.github_pages_code}"]
   ttl = 300
 }
+
+resource "aws_route53_record" "dns_record_mail" {
+  zone_id = aws_route53_zone.dns_zone.id
+  name    = var.dns_zone_name
+  type    = "MX"
+  records = ["0 ${replace(var.dns_zone_name, ".", "-")}.mail.protection.outlook.com."]
+  ttl = 300
+}
+
+resource "aws_route53_record" "dns_record_autodiscover" {
+  zone_id = aws_route53_zone.dns_zone.id
+  name    = "autodiscover.${var.dns_zone_name}"
+  type    = "CNAME"
+  records = ["autodiscover.outlook.com."]
+  ttl = 300
+}
+
+resource "aws_route53_record" "dns_record_spf" {
+  zone_id = aws_route53_zone.dns_zone.id
+  name    = var.dns_zone_name
+  type    = "TXT"
+  records = ["v=spf1 include:spf.protection.outlook.com -all"]
+  ttl = 300
+}
